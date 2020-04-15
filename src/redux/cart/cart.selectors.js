@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect'; // for not to rerendering 
+import { createSelector } from 'reselect'; // for not to rerendering / memoization purposes
 
 const selectCart = state => state.cart;
 
