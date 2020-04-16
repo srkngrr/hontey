@@ -1,7 +1,8 @@
 import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
+import 'firebase/firestore'; // For database
+import 'firebase/auth'; // For authentication
 
+// Configuration data which we took from Firebase
 const config = {
 	apiKey: "AIzaSyDuDDKGmBxpYR2SfWy18Tys8WhJBFCgv7k",
 	authDomain: "hontey-db.firebaseapp.com",
@@ -13,6 +14,9 @@ const config = {
 	measurementId: "G-JRMDSFYSZZ"
 }
 
+firebase.initializeApp(config);
+
+// Creating User Profile
 export const createUserProfileDocument = async (userAuth, additionalData) => {
 	if (!userAuth) return;
 
@@ -38,7 +42,37 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 	return userRef
 } 
 
-firebase.initializeApp(config);
+// We can use this function to add collection and documents into firestore
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+	const collectionRef = firestore.collection(collectionKey)
+
+	const batch = firestore.batch()
+	objectsToAdd.forEach(obj => {
+		const newDocRef = collectionRef.doc()
+		batch.set(newDocRef,obj)
+	})
+
+	return await batch.commit()
+}
+
+export const convertCollectionsSnapshotToMap = (collections) => {
+	const transformedCollection = collections.docs.map(doc => {
+		const {title, items} = doc.data()
+		return {
+			routeName: encodeURI(title.toLowerCase()),
+			id: doc.id,
+			title,
+			items
+		}
+	})
+
+	return transformedCollection.reduce((acc, collection) => {
+		acc[collection.title.toLowerCase()] = collection;
+		return acc
+	} , {})
+}
+
+
 
 export const auth = firebase.auth()
 export const firestore = firebase.firestore()
