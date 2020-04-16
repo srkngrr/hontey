@@ -19,3 +19,7 @@ export const selectCollection = collectionUrlParam =>  // currying
 			? collections[collectionUrlParam]
 			: null
 )
+
+export const selectIsCollectionFetching = createSelector([selectShop], shop => shop.isFetching)
+
+export const selectIsCollectionLoaded = createSelector([selectShop], shop => !!shop.collections) // !!0 -> false !!{} -> true
