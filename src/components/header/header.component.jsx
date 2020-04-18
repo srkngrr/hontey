@@ -2,18 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import {auth} from '../../firebase/firebase.utils';
 import CartIcon from '../cart-icon/cart-icon.component';
 import CartDropdown from '../cart-dropdown/cart-dropdown.component';
-import { selectCurrentUser } from '../../redux/user/user.selectors'
-import { selectCartHidden } from '../../redux/cart/cart.selectors'
+import { selectCurrentUser } from '../../redux/user/user.selectors';
+import { selectCartHidden } from '../../redux/cart/cart.selectors';
 
-import {ReactComponent as Logo} from '../../assets/crown.svg'
+import { signOutStart } from '../../redux/user/user.actions';
+
+import {ReactComponent as Logo} from '../../assets/crown.svg';
 
 import { HeaderContainer, LogoContainer, OptionsContainer, OptionLink } from './header.styles';
 
 
-const Header = ({ currentUser, hidden }) => { // It's getting currentUser prop from rootReducer
+const Header = ({ currentUser, hidden, signOutStart }) => { // It's getting currentUser prop from rootReducer
 	return (
 		<HeaderContainer>
 			<LogoContainer to="/"> 
@@ -28,7 +29,7 @@ const Header = ({ currentUser, hidden }) => { // It's getting currentUser prop f
 				</OptionLink>
 				{
 					currentUser ? 
-					<OptionLink as='div' onClick={() => auth.signOut()}>SIGN OUT</OptionLink> 
+					<OptionLink as='div' onClick={signOutStart}>SIGN OUT</OptionLink> 
 					: 
 					<OptionLink to='/signin'>SIGN IN</OptionLink>
 				}
@@ -42,17 +43,16 @@ const Header = ({ currentUser, hidden }) => { // It's getting currentUser prop f
 	)
 }
 
-// const mapStateToProps = (state) => ({ // state => rootReducer
-// 	currentUser: selectCurrentUser(state),
-// 	hidden: selectCartHidden(state)
-// })
 
 const mapStateToProps = createStructuredSelector({
 	currentUser: selectCurrentUser,
 	hidden: selectCartHidden
 })
 
+const mapDispatchToProps = dispatch => ({
+	signOutStart: () => dispatch(signOutStart())
+})
 
 // We asked currentUser props from rootReducer by connect with mapStateToProps
-export default connect(mapStateToProps)(Header); 
+export default connect(mapStateToProps, mapDispatchToProps)(Header); 
 
